@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crafting Table - Setup Guide</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --surface-color: #161b22;
+            --primary-color: #58a6ff;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .step-container {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .step-title {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .code-wrapper {
+            position: relative;
+            margin-top: 15px;
+        }
+
+        pre {
+            background-color: #010409;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9rem;
+            color: #e6edf3;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--surface-color);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .copy-btn.copied {
+            background-color: #238636;
+            color: #fff;
+            border-color: #2ea043;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Crafting Table</h1>
+    <div class="subtitle">Rust terminal application</div>
+    <div class="step-container">
+        <p><strong>Current version:</strong> Crafting Table is now a Rust project. From the project directory, run <code>cargo run</code>; see <a href="./README.md">README.md</a> for current setup and backend requirements. The steps below document the legacy Bash version.</p>
+    </div>
+
+    <div class="step-container">
+        <h2 class="step-title"><span class="step-number">1</span> Install Homebrew</h2>
+        <p>If the MacBook doesn't have Homebrew installed yet, open the terminal and run:</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></pre>
+        </div>
+    </div>
+
+    <div class="step-container">
+        <h2 class="step-title"><span class="step-number">2</span> Install Dependencies</h2>
+        <p>Homebrew has all required tools readily available in its official repositories:</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>brew install figlet imagemagick ffmpeg yt-dlp gallery-dl</code></pre>
+        </div>
+    </div>
+
+    <div class="step-container">
+        <h2 class="step-title"><span class="step-number">3</span> Create the Script File</h2>
+        <p>Create the scripts directory and open the file in nano:</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>mkdir -p ~/.scripts
+nano ~/.scripts/craftingtable.sh</code></pre>
+        </div>
+        <p>Paste the following code into the file, then save (Ctrl+O, Enter) and exit (Ctrl+X):</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>#!/bin/bash
+
+# Print the aesthetic header
+if command -v figlet &> /dev/null; then
+    figlet "craftingtable"
+else
+    echo "======================================"
+    echo "           CRAFTING TABLE             "
+    echo "======================================"
+fi
+
+# Function to parse destination shortcuts
+get_dest() {
+    local input="$1"
+    case "$input" in
+        dz|"") echo "$HOME/Downloads" ;;
+        dc) echo "$HOME/Documents" ;;
+        img) echo "$HOME/Pictures" ;;
+        mv) echo "$HOME/Movies" ;;
+        ms) echo "$HOME/Music" ;;
+        *) echo "$input" ;;
+    esac
+}
+
+echo "What would you like to craft today?"
+echo "1) 🔄 Format Conversion (Media/Images)"
+echo "2) 📐 Resolution Scaling (Video)"
+echo "3) 📥 Mass YouTube Download (yt-dlp)"
+echo "4) 🖼️ Mass Image Conversion (magick)"
+echo "5) 🌐 Mass Image Download (gallery-dl)"
+read -p "Select an option (1-5): " opt
+
+case $opt in
+    1)
+        read -p "File to convert (drag & drop or path): " src_file
+        read -p "Target format (e.g., mp4, mp3, png, jpg): " ext
+        read -p "Destination (dz, dc, img, mv, ms, or path) [Default: dz]: " dest_input
+        
+        dest_dir=$(get_dest "$dest_input")
+        mkdir -p "$dest_dir"
+        
+        filename=$(basename -- "$src_file")
+        base="${filename%.*}"
+        
+        echo "Converting..."
+        ffmpeg -i "$src_file" "$dest_dir/$base.$ext"
+        echo "✅ Done! Saved to $dest_dir/$base.$ext"
+        ;;
+
+    2)
+        read -p "Video file to scale: " src_file
+        read -p "Target height (e.g., 1080 for FHD, 1440 for 2K, 2160 for 4K): " res
+        read -p "Orientation? (v for vertical, h for horizontal): " orientation
+        read -p "Destination (dz, dc, img, mv, ms, or path) [Default: dz]: " dest_input
+        
+        dest_dir=$(get_dest "$dest_input")
+        mkdir -p "$dest_dir"
+        filename=$(basename -- "$src_file")
+        base="${filename%.*}"
+        
+        if [ "$orientation" == "v" ]; then
+            scale_filter="scale=-2:$res"
+        else
+            scale_filter="scale=-2:$res"
+        fi
+        
+        echo "Scaling..."
+        ffmpeg -i "$src_file" -vf "$scale_filter" -vcodec libx264 -crf 23 -acodec aac "$dest_dir/${base}_${res}p.mp4"
+        echo "✅ Done! Saved to $dest_dir/${base}_${res}p.mp4"
+        ;;
+
+    3)
+        read -p "Paste YouTube links (separated by space): " links
+        read -p "Format (mp4, mp3) [Default: mp4]: " format
+        read -p "Destination (dz, dc, img, mv, ms, or path) [Default: dz]: " dest_input
+        
+        dest_dir=$(get_dest "$dest_input")
+        mkdir -p "$dest_dir"
+        
+        if [ "$format" == "mp3" ]; then
+            yt-dlp -x --audio-format mp3 -P "$dest_dir" $links
+        else
+            yt-dlp -S res,ext:mp4:m4a --recode mp4 -P "$dest_dir" $links
+        fi
+        echo "✅ Mass download complete!"
+        ;;
+
+    4)
+        read -p "Source folder (path): " src_dir
+        read -p "Source file extension (e.g., webp, jpg): " src_ext
+        read -p "Target format (e.g., png): " target_ext
+        read -p "Destination (dz, dc, img, mv, ms, or path) [Default: dz]: " dest_input
+        
+        dest_dir=$(get_dest "$dest_input")
+        mkdir -p "$dest_dir"
+        
+        echo "Mass converting images..."
+        magick "$src_dir/*.$src_ext" "$dest_dir/%d.$target_ext"
+        echo "✅ Done! Images saved in $dest_dir"
+        ;;
+
+    5)
+        read -p "Website link to download from: " link
+        read -p "Destination (dz, dc, img, mv, ms, or path) [Default: dz]: " dest_input
+        
+        dest_dir=$(get_dest "$dest_input")
+        mkdir -p "$dest_dir"
+        
+        echo "Fetching gallery..."
+        gallery-dl -d "$dest_dir" "$link"
+        echo "✅ Done! Gallery downloaded to $dest_dir"
+        ;;
+
+    *)
+        echo "Invalid option. Exiting."
+        ;;
+esac</code></pre>
+        </div>
+    </div>
+
+    <div class="step-container">
+        <h2 class="step-title"><span class="step-number">4</span> Make the Script Executable</h2>
+        <p>Grant execution permissions so the script can run:</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>chmod +x ~/.scripts/craftingtable.sh</code></pre>
+        </div>
+    </div>
+
+    <div class="step-container">
+        <h2 class="step-title"><span class="step-number">5</span> Add the Alias to Zsh</h2>
+        <p>Open your Zsh configuration file:</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>nano ~/.zshrc</code></pre>
+        </div>
+        <p>Add the following alias at the bottom of the file:</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>alias craftingtable="~/.scripts/craftingtable.sh"</code></pre>
+        </div>
+    </div>
+
+    <div class="step-container">
+        <h2 class="step-title"><span class="step-number">6</span> Apply the Changes</h2>
+        <p>Refresh your terminal session to activate the alias:</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>source ~/.zshrc</code></pre>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const pre = button.nextElementSibling;
+            const code = pre.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.innerText;
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerText = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                button.innerText = 'Error';
+            });
+        }
+    </script>
+</body>
+</html>
